@@ -3,6 +3,7 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const requireLogin = require('../middleware/requireLogin')
 const postModel = mongoose.model("post")
+const userModel = mongoose.model("user")
 
 router.get('/allpost', requireLogin, (req, res) => {
     postModel.find()
@@ -153,5 +154,21 @@ router.delete('/deletepost/:postId', requireLogin, async (req, res) => {
     }
 });
 
+router.get('/likeslist/:id',requireLogin,(req,res)=>{
+    postModel.findOne({_id:req.params.id})
+    .select('likes')
+    .then(userData=>{
+        userModel.find({_id:userData.likes})
+        .select("_id name dp")
+        .then((result)=>{
+            if(!result){
+                return res.status(422).json({err:"User Not found"})
+            }
+            res.json(result)
+        })
+    }).catch(err=>{
+        console.log(err)
+    })
+})
 
 module.exports = router;

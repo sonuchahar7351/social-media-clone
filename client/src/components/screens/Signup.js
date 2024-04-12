@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
+import { BiSolidHide, BiSolidShow } from "react-icons/bi";
 const Signup = () => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
@@ -8,6 +9,7 @@ const Signup = () => {
     const navigate = useNavigate();
     const [image, setImage] = useState("");
     const [url, setUrl] = useState(undefined);
+    const [showPassword,setShowPassword] = useState(false);
 
     useEffect(() => {
         if (url) {
@@ -73,7 +75,11 @@ const Signup = () => {
                 <input className='border-2 border-gray-300 py-2 px-4 outline-none w-full focus:border-blue-500 rounded-md' type="text" placeholder='Name' value={name} onChange={(e) => setName(e.target.value)} />
 
                 <input className='border-2 border-gray-300 py-2 px-4 outline-none w-full focus:border-blue-500 rounded-md' type="text" placeholder='Email' value={email} onChange={(e) => setEmail(e.target.value)} />
-                <input className='border-2 border-gray-300 py-2 px-4 outline-none w-full focus:border-blue-500 rounded-md' type="password" placeholder='Password' value={password} onChange={(e) => setPassword(e.target.value)} />
+                <div className='relative w-full'>
+                    <input className='border-2 border-gray-300 py-2 pr-12 px-4 outline-none w-full focus:border-blue-500 rounded-md' type={showPassword ? `text` : 'password'} placeholder='Password' value={password} onChange={(e) => setPassword(e.target.value)} />
+
+                    {showPassword ? <BiSolidHide className="absolute right-5 top-1/2 -translate-y-1/2 text-2xl cursor-pointer opacity-60 " title='Hide Password' onClick={() => setShowPassword(prev => !prev)} /> : <BiSolidShow className="absolute right-5 top-1/2 -translate-y-1/2 text-2xl cursor-pointer opacity-60 " title='Show Password' onClick={() => setShowPassword(prev => !prev)} />}
+                </div>
                 <label className="flex w-full gap-2 items-center px-1">
                     <span className="text-black font-medium">Upload Dp</span>
                     <input type="file" className="file:border file:border-solid block text-sm text-slate-500
@@ -82,7 +88,7 @@ const Signup = () => {
       file:text-sm file:font-semibold
       file:bg-violet-50 file:text-violet-700
       hover:file:bg-violet-100
-    " onChange={(e)=>setImage(e.target.files[0])} />
+    " onChange={(e) => setImage(e.target.files[0])} />
                 </label>
                 <button className='w-full bg-blue-400 py-2 text-md font-medium rounded-sm hover:bg-blue-500 duration-300 tracking-wide' onClick={() => postData()}>Signup</button>
 

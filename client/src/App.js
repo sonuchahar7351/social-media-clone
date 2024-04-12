@@ -13,6 +13,7 @@ import Followinglist from './components/screens/Followinglist'
 import Followerlist from './components/screens/Followerlist'
 
 import { initialState, reducer } from './Reducers/userReducer'
+import LikesList from './components/screens/LikesList'
 
 export const userContext = createContext();
 const Routing = ()=>{
@@ -39,6 +40,7 @@ const Routing = ()=>{
       <Route path="/followingpost" element={<Followingpost />} />
       <Route path="/followinglist/:id" element={<Followinglist />} />
       <Route path="/followerlist/:id" element={<Followerlist />} />
+      <Route path="/likeslist/:postid" element={<LikesList />} />
     </Routes>
   )
 }

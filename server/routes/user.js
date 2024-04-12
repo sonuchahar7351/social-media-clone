@@ -41,7 +41,7 @@ router.put("/follow", requireLogin, async(req, res) => {
             $push:{followers:req.user._id},
         },{
             new:true,
-        })
+        }).select("-password")
 
         const currentUser = await user.findByIdAndUpdate(req.user._id,{
             $push:{following:req.body.followId}
@@ -54,13 +54,14 @@ router.put("/follow", requireLogin, async(req, res) => {
         res.status(422).json({err});
     }
 })
+
 router.put("/unfollow", requireLogin, async(req, res) => {
     try{
         const followedUser = await user.findByIdAndUpdate(req.body.unfollowId,{
             $pull:{followers:req.user._id},
         },{
             new:true,
-        })
+        }).select("-password")
 
         const currentUser = await user.findByIdAndUpdate(req.user._id,{
             $pull:{following:req.body.unfollowId}
@@ -118,5 +119,24 @@ router.get('/followerlist/:id',requireLogin,(req,res)=>{
     }).catch(err=>{
         console.log(err)
     })
+})
+router.put('/removeFollower',requireLogin,async(req,res)=>{
+    try{
+        const followedUser = await user.findByIdAndUpdate(req.body.followerId,{
+            $pull:{following:req.user._id},
+        },{
+            new:true,
+        }).select("-password")
+
+        const currentUser = await user.findByIdAndUpdate(req.user._id,{
+            $pull:{followers:req.body.followerId}
+        },{
+            new:true,
+        }).select("-password")
+
+        res.json({currentUser,followedUser})
+    }catch(err){
+        res.status(422).json({err});
+    }
 })
 module.exports = router;

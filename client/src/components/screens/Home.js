@@ -9,7 +9,6 @@ const Home = () => {
   const [data, setData] = useState([]);
   const { state, dispatch } = useContext(userContext);
 
-  let userData = typeof state == "string" ? JSON.parse(state) : state;
 
   useEffect(() => {
     fetch("http://localhost:2048/allpost", {
@@ -37,7 +36,7 @@ const Home = () => {
       .then((res) => res.json())
       .then((result) => {
         const newData = data.map((item) => {
-          if (item._id == result._id) {
+          if (item._id === result._id) {
             return result;
           } else {
             return item;
@@ -64,7 +63,7 @@ const Home = () => {
       .then((res) => res.json())
       .then((result) => {
         const newData = data.map((item) => {
-          if (item._id == result._id) {
+          if (item._id === result._id) {
             return result;
           } else {
             return item;
@@ -94,7 +93,7 @@ const Home = () => {
         .then((response) => response.json())
         .then((result) => {
           const newData = data.map((item) => {
-            if (item._id == result._id) {
+            if (item._id === result._id) {
               return result;
             } else {
               return item;
@@ -137,7 +136,7 @@ const Home = () => {
 
             <Link className="flex items-center gap-2"
               to={
-                item.postedBy._id == userData._id
+                item.postedBy._id === state._id
                   ? "/profile"
                   : `/profile/${item.postedBy._id}`
               }
@@ -145,8 +144,8 @@ const Home = () => {
               <img src={item.postedBy.dp} alt="" style={{ width: '30px', height: '30px', borderRadius: '50%', objectFit: 'cover' }} />
               <h5 className="font-bold">{item.postedBy.name}</h5>
             </Link>
-            {userData
-              ? item.postedBy._id == userData._id && (
+            {state
+              ? item.postedBy._id === state._id && (
                 <MdDelete
                   style={{
                     color: "red",
@@ -163,9 +162,9 @@ const Home = () => {
             <img src={item.picture} alt="Post" className="w-full h-[100%] object-cover " />
           </div>
           <div className="p-4 flex flex-col gap-2">
-            {userData
+            {state
               ? [
-                item.likes.includes(userData._id) ? (
+                item.likes.includes(state._id) ? (
                   <MdFavorite
                     style={{
                       color: "red",
@@ -183,7 +182,7 @@ const Home = () => {
               ]
               : "loading"}
 
-            <h6>{item.likes.length} likes</h6>
+            <h6 className="font-medium"><Link to={`/likeslist/${item._id}`}>{item.likes.length} likes </Link> </h6>
             <h6 className="font-semibold">{item.title}</h6>
             <p>{item.body}</p>
             {item.comments.map((record) => (

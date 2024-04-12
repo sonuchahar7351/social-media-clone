@@ -2,9 +2,11 @@ import React, { useContext, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
 import {toast} from 'react-toastify'
 import { userContext } from '../../App';
+import { BiSolidHide, BiSolidShow } from "react-icons/bi";
 const Signin = () => {
     const [email,setEmail] = useState('');
   const [password,setPassword] = useState('');
+  const [showPassword,setShowPassword] = useState(false);
   const {state,dispatch} = useContext(userContext)
 const navigate = useNavigate();
     //postData function 
@@ -42,7 +44,11 @@ const navigate = useNavigate();
             <h2 className='text-4xl font-medium'>Instagram</h2>
             <input className='border-2 border-gray-300 py-2 px-4 outline-none w-full focus:border-blue-500 rounded-md' type="text" placeholder='Email' value={email} onChange={(e)=>setEmail(e.target.value)} />
 
-            <input className='border-2 border-gray-300 py-2 px-4 outline-none w-full focus:border-blue-500 rounded-md' type="password" placeholder='Password' value={password} onChange={(e)=>setPassword(e.target.value)} />
+            <div className='relative w-full'>
+            <input className='border-2 border-gray-300 py-2 pr-12 px-4 outline-none w-full focus:border-blue-500 rounded-md' type={showPassword ? `text` : 'password'} placeholder='Password' value={password} onChange={(e)=>setPassword(e.target.value)} />
+
+            {showPassword ? <BiSolidHide className="absolute right-5 top-1/2 -translate-y-1/2 text-2xl cursor-pointer opacity-60 " title='Hide Password' onClick={()=>setShowPassword(prev=>!prev)}/> : <BiSolidShow className="absolute right-5 top-1/2 -translate-y-1/2 text-2xl cursor-pointer opacity-60 " title='Show Password' onClick={()=>setShowPassword(prev=>!prev)}/>}
+            </div>
             
             <button className='w-full bg-blue-400 py-2 text-md font-medium rounded-sm hover:bg-blue-500 duration-300 tracking-wide' onClick={() => postData()}>Login</button>
             <Link to={'/'} className='text-red-500'>Forgotten Password?</Link>

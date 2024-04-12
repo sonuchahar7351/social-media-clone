@@ -1,23 +1,48 @@
-import React, { useContext, useEffect, useState } from "react";
-import { userContext } from "../../App";
-import { Link, useParams } from "react-router-dom";
-
-const Followinglist = () => {
-    const {id} = useParams();
+import React, { useContext, useEffect, useState } from 'react'
+import { MdFavorite } from 'react-icons/md';
+import { Link, useParams } from 'react-router-dom'
+import { toast } from 'react-toastify';
+import { userContext } from '../../App';
+const LikesList = () => {
+  const { postid } = useParams();
+  const [userData, setUserData] = useState([]);
   const { state, dispatch } = useContext(userContext);
-  const [followingData, setFollowingData] = useState([]);
+
   useEffect(() => {
-    fetch(`http://localhost:2048/followinglist/${id}`, {
+    window.scrollTo(0, 0);
+    fetch(`http://localhost:2048/likeslist/${postid}`, {
+      method: "get",
       headers: {
         Authorization: "Bearer " + localStorage.getItem("jwt"),
-      },
-    })
-      .then((response) => response.json())
-      .then((result) => {
-        setFollowingData(result.result);
-      });
-  }, [id]);
+      }
+    }).then(res => res.json())
+      .then(data => {
+        if (data.err) {
+          toast.error(data.err)
+        } else {
+          setUserData(data)
+        }
+      })
+  }, [postid])
 
+  //follow user function
+  const followUser = (userid)=>{
+    fetch("http://localhost:2048/follow", {
+      method: "put",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("jwt"),
+      },
+      body: JSON.stringify({
+        followId: userid,
+      }),
+    })
+      .then((res) => res.json())
+      .then(async (data) => {
+        await dispatch({type:"UPDATE",payload:{following:data.currentUser.following,followers:data.currentUser.followers}})
+        localStorage.setItem('user',JSON.stringify(data.currentUser));
+      });
+  }
 
   //unfollow user function 
   const unfollowUser = (userid) => {
@@ -37,32 +62,20 @@ const Followinglist = () => {
         localStorage.setItem('user',JSON.stringify(data.currentUser));
       });
   };
-
-  // //follow user function
-  const followUser = (userid) => {
-    fetch("http://localhost:2048/follow", {
-      method: "put",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + localStorage.getItem("jwt"),
-      },
-      body: JSON.stringify({
-        followId: userid,
-      }),
-    })
-      .then((res) => res.json())
-      .then(async (data) => {
-        await dispatch({type:"UPDATE",payload:{following:data.currentUser.following,followers:data.currentUser.followers}})
-        localStorage.setItem('user',JSON.stringify(data.currentUser));
-      });
-  };
   return (
-    <div className="w-[100%] h-[100vh] flex flex-col mt-2">
-       <h3 className="text-center font-medium sm:text-3xl text-2xl bg-gray-50 mt-1 py-2 ">Following </h3>
-      {followingData ? (
-        followingData.map((item) => (
+    <>
+      {userData.length>0 ? [
+        <div className="w-[100%] h-[100vh] flex flex-col mt-2">
+      <h3 className="flex justify-center items-center font-medium sm:text-3xl text-2xl bg-gray-50 mt-1 py-2 "> <MdFavorite style={{
+        color: "black",
+        fontSize: "2rem",
+        margin:'0rem 0.5rem'
+      }}
+      />  {userData.length}</h3>
+      {userData ? (
+        userData.map((item) => (
           <div className="w-[80%] mt-2 mx-auto flex justify-between items-center py-2 px-4  " key={item._id}>
-            <div className="userDetail">
+            <div>
               <Link
                 style={{ display: "flex", alignItems: "center", gap: "1rem" }}
                 to={state._id === item._id ? `/profile` : `/profile/${item._id}`}
@@ -101,7 +114,9 @@ const Followinglist = () => {
         <h2>loading...</h2>
       )}
     </div>
-  );
-};
+      ] :<h2 className='text-2xl'>Loading...</h2>}
+    </>
+  )
+}
 
-export default Followinglist;
+export default LikesList
