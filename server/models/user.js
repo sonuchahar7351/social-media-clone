@@ -18,7 +18,12 @@ const userSchema = new mongoose.Schema({
         default:'https://res.cloudinary.com/ascoder/image/upload/v1711302086/opjujso3dr4bn0w9mo82.png'
     },
     followers:[{type:ObjectId, ref:"user"}],
-    following:[{type:ObjectId, ref:"user"}]
+    following:[{type:ObjectId, ref:"user"}],
+    stories:[{
+        user:{type:ObjectId,ref:"user"},
+        storyPic:String,
+        storyDate:Date,
+    }]
 })
 
 mongoose.model("user",userSchema);

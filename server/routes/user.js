@@ -87,7 +87,7 @@ router.put('/updatedp',requireLogin,(req,res)=>{
 router.post('/searchuser',(req,res)=>{
     const userPattern = new RegExp("^"+req.body.query);
     user.find({email:{$regex:userPattern}})
-    .select("_id name email")
+    .select("_id name email dp")
     .then((user)=>{
         res.status(200).json({user})
     }).catch(err=>{
@@ -137,6 +137,45 @@ router.put('/removeFollower',requireLogin,async(req,res)=>{
         res.json({currentUser,followedUser})
     }catch(err){
         res.status(422).json({err});
+    }
+})
+router.post('/addStory',requireLogin,async(req,res)=>{
+    try{
+        const addStory = await user.findByIdAndUpdate(req.user._id,{
+            $push:{
+                stories:{
+                    user:req.user._id,
+                    storyPic:req.body.pic,
+                    storyDate:new Date(),
+                }
+            }
+        },{new:true})
+        .exec();
+
+        if(!addStory){
+            res.status(422).json({msg:"Something went wrong..."})
+        }else{
+            res.status(201).json({addStory})
+        }
+
+    }catch(err){
+        res.status(422).json({err})
+        console.log(err);
+    }
+})
+router.get('/getStory',requireLogin,async(req,res)=>{
+    try{
+        const story = await user.find({"stories.storyDate":{"$lte":new Date(Date.now() +1*24*60*60*1000)}}) //less than 24 hours
+        .select("_id name pic stories")
+        
+        if(!story){
+            res.status(422).json({msg:"Story not awailable"})
+        }else{
+            res.status(200).json({story})
+        }
+    }catch(err){
+        console.log(err);
+        res.status(422).json({err})
     }
 })
 module.exports = router;

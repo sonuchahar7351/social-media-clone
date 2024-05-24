@@ -3,6 +3,7 @@ import { MdFavorite, MdFavoriteBorder, MdDelete } from "react-icons/md";
 import { userContext } from "../../App";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
+import Story from "../Story";
 
 const Home = () => {
   const [comment, setComment] = useState("");
@@ -129,9 +130,10 @@ const Home = () => {
   };
 
   return (
-    <div className="flex flex-col items-center gap-6 w-[100%]  ">
+    <div className="flex flex-col items-center gap-6 w-[100%] mt-3  ">
+      <Story/>
       {data.map((item) => (
-        <div className="flex flex-col w-[90%] sm:w-[500px] shadow-[0px_0px_8px_1px_rgba(0,0,0,0.3)] p-2 mt-8" key={item._id}>
+        <div className="flex flex-col w-[90%] sm:w-[500px] shadow-[0px_0px_8px_1px_rgba(0,0,0,0.3)] p-2 mt-2" key={item._id}>
           <div className="p-2 flex justify-between ">
 
             <Link className="flex items-center gap-2"
